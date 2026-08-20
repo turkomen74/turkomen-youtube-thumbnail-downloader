@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Site Başlığı -->
+    <title>TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER</title>
+    
+    <!-- Favicon Entegrasyonu -->
+    <link rel="icon" href="ikon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="ikon.ico" type="image/x-icon">
+
+    <!-- Google Search Console Doğrulaması -->
+    <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
+
+    <!-- Discord & Sosyal Medya Zengin Önizleme (Open Graph & Meta Tags) -->
+    <meta name="title" content="TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER">
+    <meta name="description" content="Ücretsiz YouTube Video Kapak Fotoğrafı İndirme Aracı. Videoların Tam Kalitede (4K / HD) Kapak Resmini Anında .PNG Formatında İndirin!">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Open Graph / Discord Embed -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER">
+    <meta property="og:description" content="Ücretsiz YouTube Video Kapak Fotoğrafı İndirme Aracı. Videoların Tam Kalitede (4K / HD) Kapak Resmini Anında .PNG Formatında İndirin!">
+    <meta property="og:image" content="logo.png">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER">
+    <meta property="twitter:description" content="Ücretsiz YouTube Video Kapak Fotoğrafı İndirme Aracı. Videoların Tam Kalitede (4K / HD) Kapak Resmini Anında .PNG Formatında İndirin!">
+    <meta property="twitter:image" content="logo.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Modern Typography: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px -10px rgba(37, 99, 235, 0.35)',
+                        'glow-lg': '0 0 60px -15px rgba(37, 99, 235, 0.45)',
+                        'modern': '0 20px 50px -12px rgba(15, 23, 42, 0.08)',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Ultra Modern Subtle Mesh Background Pattern */
+        .bg-mesh {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(96, 165, 250, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(219, 234, 254, 0.3) 0px, transparent 50%);
+        }
+
+        /* Glassmorphism Card Style */
+        .ultra-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .ultra-glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Custom Input Glow */
+        .input-glow:focus-within {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Shake animation for errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased bg-mesh">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 ultra-glass border-b border-slate-200/80 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo ve Başlık -->
+            <a href="#" class="flex items-center gap-3 group">
+                <!-- logo.png Gösterimi (Eğer resim yoksa kırılmasın diye varsayılan ikon fallback'i var) -->
+                <div class="relative w-11 h-11 rounded-2xl bg-white border border-slate-200/80 p-1.5 shadow-sm flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105 shrink-0">
+                    <img 
+                        src="logo.png" 
+                        alt="TURKOMEN Logo" 
+                        class="w-full h-full object-contain"
+                        onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'w-full h-full rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-inner\'>T</div>';"
+                    >
+                </div>
+
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <!-- TURKOMEN Mavi Yazı -->
+                        <span class="text-xl sm:text-2xl font-black tracking-tight text-blue-600 drop-shadow-sm">TURKOMEN</span>
+                        <span class="text-xs sm:text-sm font-extrabold tracking-tight text-slate-800 uppercase bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">Downloader</span>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold tracking-wide text-slate-600 hidden sm:block">YOUTUBE THUMBNAIL DOWNLOADER</span>
+                </div>
+            </a>
+
+            <!-- Sağ Taraf Badge / Status -->
+            <div class="flex items-center gap-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/70 text-blue-700 text-xs font-bold shadow-sm">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                    </span>
+                    <span class="hidden sm:inline">Otomatik 4K PNG İndirme Aktif</span>
+                    <span class="sm:hidden">4K Auto-PNG</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14 flex flex-col items-center">
+        
+        <!-- Hero Header -->
+        <div class="text-center max-w-3xl mb-8 sm:mb-12 animate-float">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 via-blue-600/10 to-indigo-500/10 text-blue-700 text-xs sm:text-sm font-extrabold mb-4 border border-blue-200/60 shadow-sm backdrop-blur-sm">
+                <i class="fa-solid fa-sparkles text-blue-600"></i>
+                <span>En Yüksek 4K/HD Çözünürlük Algılayıcı</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight sm:leading-tight">
+                YouTube Kapak Resimlerini <br class="hidden sm:inline"/>
+                <span class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent">Ultra Kalitede (4K)</span> İndirin
+            </h1>
+
+            <p class="mt-4 text-sm sm:text-lg text-slate-600 font-medium max-w-2xl mx-auto leading-relaxed">
+                YouTube video veya Shorts bağlantısını yapıştırın. Sistem en yüksek kalitedeki görseli otomatik işlesin ve anında saf <span class="font-extrabold text-slate-900 bg-blue-100/60 px-1.5 py-0.5 rounded">.png</span> olarak cihazınıza kaydetsin.
+            </p>
+        </div>
+
+        <!-- Input & Search Container Card -->
+        <div class="w-full max-w-3xl ultra-glass-card rounded-3xl p-3 sm:p-5 shadow-modern mb-8 transition-all input-glow relative">
+            <form id="downloadForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+                <div class="relative flex flex-col sm:flex-row items-center gap-2.5">
+                    
+                    <!-- Text Field -->
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-red-500">
+                            <i class="fa-brands fa-youtube text-2xl sm:text-3xl"></i>
+                        </div>
+
+                        <input 
+                            type="text" 
+                            id="videoUrlInput" 
+                            placeholder="YouTube video veya Shorts linkini buraya yapıştırın..." 
+                            class="w-full pl-12 sm:pl-16 pr-24 py-4 sm:py-5 bg-slate-50/90 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all text-sm sm:text-base font-semibold shadow-inner"
+                            autocomplete="off"
+                        >
+
+                        <!-- Paste Button inside input -->
+                        <button 
+                            type="button" 
+                            onclick="pasteClipboard()" 
+                            class="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-2 text-xs font-bold bg-slate-200/80 hover:bg-slate-300 text-slate-700 rounded-xl transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
+                            title="Panodan Yapıştır"
+                        >
+                            <i class="fa-regular fa-paste text-blue-600"></i>
+                            <span class="hidden sm:inline">Yapıştır</span>
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="w-full sm:w-auto min-w-[170px] py-4 sm:py-5 px-7 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 transition-all transform active:scale-95 flex items-center justify-center gap-2.5 text-base shrink-0 cursor-pointer"
+                    >
+                        <i class="fa-solid fa-bolt text-lg"></i>
+                        <span>Resmi Getir</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Error Box: Strictly "Sadece Youtube Destekli :(" -->
+            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-3.5 text-red-600 font-extrabold transition-all animate-shake">
+                <div class="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-base sm:text-lg tracking-wide" id="errorText">Sadece Youtube Destekli :(</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result / Preview Container -->
+        <div id="resultCard" class="hidden w-full max-w-3xl ultra-glass-card rounded-3xl p-5 sm:p-7 shadow-modern space-y-6 transition-all duration-500">
+            
+            <!-- Result Header Info -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        4K Ultra HD Hazır
+                    </span>
+                    <span class="text-xs sm:text-sm font-bold text-slate-500" id="videoResolutionBadge">1920x1080 (4K/HD)</span>
+                </div>
+
+                <button onclick="clearResult()" class="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-1 self-end sm:self-auto transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i> Temizle
+                </button>
+            </div>
+
+            <!-- Main Preview Container -->
+            <div class="relative group rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 aspect-video shadow-2xl flex items-center justify-center">
+                <!-- Skeleton Loading -->
+                <div id="imageLoader" class="absolute inset-0 bg-slate-900 animate-pulse flex flex-col items-center justify-center text-slate-400 gap-3">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-500"></i>
+                    <span class="text-xs font-bold tracking-wider uppercase text-slate-400">4K Kapak Hazırlanıyor...</span>
+                </div>
+
+                <!-- Thumbnail Image -->
+                <img 
+                    id="thumbnailImage" 
+                    src="" 
+                    alt="YouTube Thumbnail" 
+                    class="w-full h-full object-contain relative z-10 opacity-0 transition-opacity duration-300"
+                    onload="onImageLoaded()"
+                    onerror="onImageError()"
+                >
+            </div>
+
+            <!-- Quick Download Actions -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <!-- Direct PNG Download Button -->
+                <button 
+                    onclick="downloadAsPNG()" 
+                    id="downloadPngBtn"
+                    class="flex-1 py-4 sm:py-4.5 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-600/30 hover:shadow-blue-600/40 transition-all flex items-center justify-center gap-3 text-base sm:text-lg cursor-pointer transform active:scale-98"
+                >
+                    <i class="fa-solid fa-circle-down text-xl"></i>
+                    <span>.PNG Olarak İndir (4K Tam Kalite)</span>
+                </button>
+
+                <!-- Open original in new tab -->
+                <a 
+                    id="openTabBtn" 
+                    href="#" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    class="py-4 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm border border-slate-200/80 shrink-0"
+                >
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span class="hidden sm:inline">Yeni Sekmede Aç</span>
+                </a>
+            </div>
+
+            <!-- Info footnote -->
+            <div class="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 text-center">
+                <i class="fa-solid fa-shield-check text-emerald-500 text-sm"></i>
+                <span>İnen dosya otomatik olarak <strong>turkomen-yt-thumbnail-downloader.png</strong> adıyla kaydedilir.</span>
+            </div>
+        </div>
+
+        <!-- Responsive Feature Badges / Highlights Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-3xl mt-10">
+            
+            <div class="p-5 ultra-glass-card rounded-2xl shadow-sm flex items-center sm:flex-col sm:text-center gap-4 transition-transform hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-200/50 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base">Otomatik 4K Algılama</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Kalite seçmeye gerek yok, sistem doğrudan sunucudan en yüksek çözünürlüğü çeker.</p>
+                </div>
+            </div>
+
+            <div class="p-5 ultra-glass-card rounded-2xl shadow-sm flex items-center sm:flex-col sm:text-center gap-4 transition-transform hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-200/50 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-file-png"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base">Ham .PNG Dönüştürücü</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Görsel kalitesini bozmadan tuval üzerinde işler ve saf .png formatında sunar.</p>
+                </div>
+            </div>
+
+            <div class="p-5 ultra-glass-card rounded-2xl shadow-sm flex items-center sm:flex-col sm:text-center gap-4 transition-transform hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-200/50 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base">%100 Mobil Uyumlu UI</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Telefon, tablet ve bilgisayarlarda yüksek hızlı, sorunsuz indirme deneyimi.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200/80 ultra-glass py-6 sm:py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <!-- TURKOMEN Mavi Yazı -->
+                <span class="text-lg font-black text-blue-600">TURKOMEN</span>
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-widest">YOUTUBE THUMBNAIL DOWNLOADER</span>
+            </div>
+            <p class="text-xs font-semibold text-slate-500">
+                &copy; 2026 TURKOMEN. Tüm hakları saklıdır. En Yüksek Kaliteli Kapak Resmi İndirici.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Hidden Canvas Element for JPG -> PNG Conversion -->
+    <canvas id="conversionCanvas" class="hidden"></canvas>
+
+    <script>
+        let currentVideoId = '';
+        let currentQuality = 'maxres';
+
+        /**
+         * YouTube Video ID Extractor
+         */
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            url = url.trim();
+            const youtubeRegex = /^(?:https?:\/\/)?(?:www\.|m\.|music\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(youtubeRegex);
+            return (match && match[1]) ? match[1] : null;
+        }
+
+        /**
+         * Verifies if URL belongs to YouTube domain strictly
+         */
+        function isYouTubeUrl(url) {
+            if (!url) return false;
+            const cleaned = url.trim().toLowerCase();
+            return cleaned.includes('youtube.com') || cleaned.includes('youtu.be');
+        }
+
+        /**
+         * Form submit handler
+         */
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const input = document.getElementById('videoUrlInput').value.trim();
+            const errorBox = document.getElementById('errorMessage');
+            const resultCard = document.getElementById('resultCard');
+
+            errorBox.classList.add('hidden');
+
+            if (!input || !isYouTubeUrl(input)) {
+                showError('Sadece Youtube Destekli :(');
+                resultCard.classList.add('hidden');
+                return;
+            }
+
+            const videoId = extractYouTubeId(input);
+            if (!videoId) {
+                showError('Sadece Youtube Destekli :(');
+                resultCard.classList.add('hidden');
+                return;
+            }
+
+            currentVideoId = videoId;
+            currentQuality = 'maxres'; // Automatically start with highest 4K/HD quality
+            displayThumbnail();
+        }
+
+        /**
+         * Show strict Error message
+         */
+        function showError(message) {
+            const errorBox = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message || 'Sadece Youtube Destekli :(';
+            errorBox.classList.remove('hidden');
+        }
+
+        /**
+         * Build YouTube Thumbnail Image URL
+         */
+        function getThumbnailUrl(videoId, quality) {
+            return `https://i.ytimg.com/vi/${videoId}/${quality}default.jpg`;
+        }
+
+        /**
+         * Display Thumbnail in Preview Box
+         */
+        function displayThumbnail() {
+            const resultCard = document.getElementById('resultCard');
+            const img = document.getElementById('thumbnailImage');
+            const loader = document.getElementById('imageLoader');
+            const openTabBtn = document.getElementById('openTabBtn');
+
+            loader.classList.remove('hidden');
+            img.classList.add('opacity-0');
+
+            const url = getThumbnailUrl(currentVideoId, currentQuality);
+            img.src = url;
+            openTabBtn.href = url;
+
+            resultCard.classList.remove('hidden');
+            
+            // Smooth scroll into preview view
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        /**
+         * Handlers for Image Load/Error
+         */
+        function onImageLoaded() {
+            const loader = document.getElementById('imageLoader');
+            const img = document.getElementById('thumbnailImage');
+            const resBadge = document.getElementById('videoResolutionBadge');
+
+            loader.classList.add('hidden');
+            img.classList.remove('opacity-0');
+
+            // Fallback: If YouTube has no maxres (returns low res 120px default placeholder)
+            if (currentQuality === 'maxres' && img.naturalWidth === 120) {
+                currentQuality = 'hq';
+                displayThumbnail();
+                return;
+            }
+
+            if (img.naturalWidth && img.naturalHeight) {
+                resBadge.textContent = `${img.naturalWidth}x${img.naturalHeight} (${img.naturalWidth >= 1280 ? '4K / Ultra HD' : 'Yüksek Kalite'})`;
+            }
+        }
+
+        function onImageError() {
+            if (currentQuality === 'maxres') {
+                currentQuality = 'hq';
+                displayThumbnail();
+            } else {
+                showError('Sadece Youtube Destekli :(');
+            }
+        }
+
+        /**
+         * Download Image as PNG with name: turkomen-yt-thumbnail-downloader.png
+         */
+        async function downloadAsPNG() {
+            if (!currentVideoId) return;
+
+            const downloadBtn = document.getElementById('downloadPngBtn');
+            const originalContent = downloadBtn.innerHTML;
+
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-xl"></i><span>PNG Dönüştürülüyor...</span>`;
+
+            try {
+                const imageUrl = getThumbnailUrl(currentVideoId, currentQuality);
+
+                // Fetch image blob
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+
+                const img = new Image();
+                const blobUrl = URL.createObjectURL(blob);
+
+                img.onload = () => {
+                    const canvas = document.getElementById('conversionCanvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = img.naturalWidth || img.width;
+                    canvas.height = img.naturalHeight || img.height;
+
+                    ctx.drawImage(img, 0, 0);
+
+                    canvas.toBlob((pngBlob) => {
+                        if (!pngBlob) {
+                            resetDownloadBtn();
+                            return;
+                        }
+
+                        const pngUrl = URL.createObjectURL(pngBlob);
+                        const a = document.createElement('a');
+                        a.href = pngUrl;
+                        
+                        // Tam istenen dosya adı:
+                        a.download = 'turkomen-yt-thumbnail-downloader.png';
+                        
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+
+                        URL.revokeObjectURL(pngUrl);
+                        URL.revokeObjectURL(blobUrl);
+
+                        resetDownloadBtn();
+                    }, 'image/png', 1.0);
+                };
+
+                img.onerror = () => {
+                    resetDownloadBtn();
+                };
+
+                img.src = blobUrl;
+
+            } catch (err) {
+                console.error("Download fallback triggered:", err);
+                // Direct fallback link
+                const a = document.createElement('a');
+                a.href = getThumbnailUrl(currentVideoId, currentQuality);
+                a.download = 'turkomen-yt-thumbnail-downloader.png';
+                a.target = '_blank';
+                a.click();
+                resetDownloadBtn();
+            }
+
+            function resetDownloadBtn() {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalContent;
+            }
+        }
+
+        /**
+         * Paste from Clipboard
+         */
+        async function pasteClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    const input = document.getElementById('videoUrlInput');
+                    input.value = text;
+                    if (isYouTubeUrl(text)) {
+                        document.getElementById('downloadForm').dispatchEvent(new Event('submit'));
+                    }
+                }
+            } catch (err) {
+                console.log("Clipboard read restricted.");
+            }
+        }
+
+        /**
+         * Clear Result UI
+         */
+        function clearResult() {
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('videoUrlInput').value = '';
+            document.getElementById('errorMessage').classList.add('hidden');
+            currentVideoId = '';
+        }
+    </script>
+</body>
+</html>
