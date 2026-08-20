@@ -23,11 +23,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER">
     <meta property="og:description" content="Ücretsiz YouTube Video Kapak Fotoğrafı İndirme Aracı. Videoların Tam Kalitede (4K / HD) Kapak Resmini Anında .PNG Formatında İndirin!">
-    <meta property="og:image" content="logo.png">
+    <meta property="og:image" content="banner.png">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="TURKOMEN YOUTUBE THUMBNAIL DOWNLOADER">
     <meta property="twitter:description" content="Ücretsiz YouTube Video Kapak Fotoğrafı İndirme Aracı. Videoların Tam Kalitede (4K / HD) Kapak Resmini Anında .PNG Formatında İndirin!">
-    <meta property="twitter:image" content="logo.png">
+    <meta property="twitter:image" content="banner.png">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -130,7 +130,6 @@
             
             <!-- Logo ve Başlık -->
             <a href="#" class="flex items-center gap-3 group">
-                <!-- logo.png Gösterimi (Eğer resim yoksa kırılmasın diye varsayılan ikon fallback'i var) -->
                 <div class="relative w-11 h-11 rounded-2xl bg-white border border-slate-200/80 p-1.5 shadow-sm flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105 shrink-0">
                     <img 
                         src="logo.png" 
@@ -142,7 +141,6 @@
 
                 <div class="flex flex-col">
                     <div class="flex items-center gap-1.5">
-                        <!-- TURKOMEN Mavi Yazı -->
                         <span class="text-xl sm:text-2xl font-black tracking-tight text-blue-600 drop-shadow-sm">TURKOMEN</span>
                         <span class="text-xs sm:text-sm font-extrabold tracking-tight text-slate-800 uppercase bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">Downloader</span>
                     </div>
@@ -238,7 +236,7 @@
             </div>
         </div>
 
-        <!-- Result / Preview Container -->
+        <!-- Result / Preview Container (STRICTLY HIDDEN BY DEFAULT UNTIL VALID IMAGE) -->
         <div id="resultCard" class="hidden w-full max-w-3xl ultra-glass-card rounded-3xl p-5 sm:p-7 shadow-modern space-y-6 transition-all duration-500">
             
             <!-- Result Header Info -->
@@ -267,11 +265,8 @@
                 <!-- Thumbnail Image -->
                 <img 
                     id="thumbnailImage" 
-                    src="" 
                     alt="YouTube Thumbnail" 
                     class="w-full h-full object-contain relative z-10 opacity-0 transition-opacity duration-300"
-                    onload="onImageLoaded()"
-                    onerror="onImageError()"
                 >
             </div>
 
@@ -308,7 +303,7 @@
         </div>
 
         <!-- Responsive Feature Badges / Highlights Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-3xl mt-10">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-3xl mt-8">
             
             <div class="p-5 ultra-glass-card rounded-2xl shadow-sm flex items-center sm:flex-col sm:text-center gap-4 transition-transform hover:-translate-y-1">
                 <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-200/50 flex items-center justify-center text-xl shrink-0">
@@ -322,7 +317,7 @@
 
             <div class="p-5 ultra-glass-card rounded-2xl shadow-sm flex items-center sm:flex-col sm:text-center gap-4 transition-transform hover:-translate-y-1">
                 <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-200/50 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-file-png"></i>
+                    <i class="fa-solid fa-file-image text-blue-600"></i>
                 </div>
                 <div>
                     <h3 class="font-extrabold text-slate-900 text-base">Ham .PNG Dönüştürücü</h3>
@@ -348,7 +343,6 @@
     <footer class="mt-auto border-t border-slate-200/80 ultra-glass py-6 sm:py-8">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex items-center justify-center gap-2 mb-2">
-                <!-- TURKOMEN Mavi Yazı -->
                 <span class="text-lg font-black text-blue-600">TURKOMEN</span>
                 <span class="text-xs font-bold text-slate-700 uppercase tracking-widest">YOUTUBE THUMBNAIL DOWNLOADER</span>
             </div>
@@ -361,9 +355,99 @@
     <!-- Hidden Canvas Element for JPG -> PNG Conversion -->
     <canvas id="conversionCanvas" class="hidden"></canvas>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db = null;
+        let statsDocRef = null;
+
+        // Firebase Initialization with mandatory strict path & fallback
+        async function setupFirebase() {
+            try {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'turkomen-yt-downloader';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                    apiKey: "dummy-api-key",
+                    authDomain: "dummy.firebaseapp.com",
+                    projectId: "dummy-project",
+                    storageBucket: "dummy.appspot.com",
+                    messagingSenderId: "123456789",
+                    appId: "1:123456789:web:12345"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Strictly follow Rule 1 path structure for public collection
+                statsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'downloads');
+
+                // Real-Time listener for global download counter
+                onSnapshot(statsDocRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        updateCounterDisplay(data.totalDownloads || 0);
+                    } else {
+                        // Initialize baseline counter at 0
+                        setDoc(statsDocRef, { totalDownloads: 0 }, { merge: true }).catch(() => {});
+                        updateCounterDisplay(0);
+                    }
+                }, (error) => {
+                    console.log("Counter real-time sync offline mode active.");
+                    updateCounterDisplay(0);
+                });
+
+            } catch (err) {
+                console.log("Firestore offline fallback active.");
+                updateCounterDisplay(0);
+            }
+        }
+
+        function updateCounterDisplay(value) {
+            const el = document.getElementById('globalDownloadCounter');
+            if (el) {
+                el.textContent = Number(value).toLocaleString('tr-TR');
+            }
+        }
+
+        // Global function exposed to trigger +1 increment
+        window.triggerIncrementCounter = async function() {
+            if (statsDocRef && db) {
+                try {
+                    await updateDoc(statsDocRef, {
+                        totalDownloads: increment(1)
+                    });
+                } catch (e) {
+                    try {
+                        await setDoc(statsDocRef, { totalDownloads: increment(1) }, { merge: true });
+                    } catch(err) {
+                        console.error("Increment error:", err);
+                    }
+                }
+            } else {
+                // Local UI fallback
+                const el = document.getElementById('globalDownloadCounter');
+                if (el) {
+                    let curr = parseInt(el.textContent.replace(/\D/g, '')) || 0;
+                    el.textContent = (curr + 1).toLocaleString('tr-TR');
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', setupFirebase);
+    </script>
+
     <script>
         let currentVideoId = '';
-        let currentQuality = 'maxres';
+        const qualityList = ['maxres', 'sd', 'hq', 'mq'];
+        let currentQualityIndex = 0;
 
         /**
          * YouTube Video ID Extractor
@@ -410,25 +494,28 @@
             }
 
             currentVideoId = videoId;
-            currentQuality = 'maxres'; // Automatically start with highest 4K/HD quality
+            currentQualityIndex = 0; // Automatically start with highest 4K/HD quality
             displayThumbnail();
         }
 
         /**
-         * Show strict Error message
+         * Show strict Error message and hide result card
          */
         function showError(message) {
             const errorBox = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
+            const resultCard = document.getElementById('resultCard');
+
             errorText.textContent = message || 'Sadece Youtube Destekli :(';
             errorBox.classList.remove('hidden');
+            resultCard.classList.add('hidden');
         }
 
         /**
          * Build YouTube Thumbnail Image URL
          */
-        function getThumbnailUrl(videoId, quality) {
-            return `https://i.ytimg.com/vi/${videoId}/${quality}default.jpg`;
+        function getThumbnailUrl(videoId, qualityKey) {
+            return `https://i.ytimg.com/vi/${videoId}/${qualityKey}default.jpg`;
         }
 
         /**
@@ -443,50 +530,76 @@
             loader.classList.remove('hidden');
             img.classList.add('opacity-0');
 
-            const url = getThumbnailUrl(currentVideoId, currentQuality);
+            const qualityKey = qualityList[currentQualityIndex];
+            const url = getThumbnailUrl(currentVideoId, qualityKey);
+            
+            // Attach image event listeners programmatically
+            img.onload = onImageLoaded;
+            img.onerror = onImageError;
             img.src = url;
             openTabBtn.href = url;
-
-            resultCard.classList.remove('hidden');
-            
-            // Smooth scroll into preview view
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         /**
-         * Handlers for Image Load/Error
+         * Handlers for Image Load / Error Verification
          */
         function onImageLoaded() {
             const loader = document.getElementById('imageLoader');
             const img = document.getElementById('thumbnailImage');
             const resBadge = document.getElementById('videoResolutionBadge');
+            const resultCard = document.getElementById('resultCard');
 
+            // CRITICAL CHECK: YouTube returns a 120x90 grey placeholder icon when requested quality doesn't exist
+            if (img.naturalWidth <= 120) {
+                if (currentQualityIndex < qualityList.length - 1) {
+                    currentQualityIndex++;
+                    displayThumbnail();
+                    return;
+                } else {
+                    // No valid quality image found -> Do NOT show grey box, hide result card & show error
+                    resultCard.classList.add('hidden');
+                    showError('Sadece Youtube Destekli :(');
+                    return;
+                }
+            }
+
+            // Valid thumbnail loaded successfully
             loader.classList.add('hidden');
             img.classList.remove('opacity-0');
-
-            // Fallback: If YouTube has no maxres (returns low res 120px default placeholder)
-            if (currentQuality === 'maxres' && img.naturalWidth === 120) {
-                currentQuality = 'hq';
-                displayThumbnail();
-                return;
-            }
+            resultCard.classList.remove('hidden');
 
             if (img.naturalWidth && img.naturalHeight) {
                 resBadge.textContent = `${img.naturalWidth}x${img.naturalHeight} (${img.naturalWidth >= 1280 ? '4K / Ultra HD' : 'Yüksek Kalite'})`;
             }
+
+            // Smooth scroll into preview view
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function onImageError() {
-            if (currentQuality === 'maxres') {
-                currentQuality = 'hq';
+            const resultCard = document.getElementById('resultCard');
+            if (currentQualityIndex < qualityList.length - 1) {
+                currentQualityIndex++;
                 displayThumbnail();
             } else {
+                resultCard.classList.add('hidden');
                 showError('Sadece Youtube Destekli :(');
             }
         }
 
+        // Expose functions globally to window object for inline HTML event handlers
+        window.handleFormSubmit = handleFormSubmit;
+        window.showError = showError;
+        window.displayThumbnail = displayThumbnail;
+        window.onImageLoaded = onImageLoaded;
+        window.onImageError = onImageError;
+        window.downloadAsPNG = downloadAsPNG;
+        window.pasteClipboard = pasteClipboard;
+        window.clearResult = clearResult;
+
         /**
          * Download Image as PNG with name: turkomen-yt-thumbnail-downloader.png
+         * and triggers real-time global counter update (+1)
          */
         async function downloadAsPNG() {
             if (!currentVideoId) return;
@@ -498,7 +611,8 @@
             downloadBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-xl"></i><span>PNG Dönüştürülüyor...</span>`;
 
             try {
-                const imageUrl = getThumbnailUrl(currentVideoId, currentQuality);
+                const qualityKey = qualityList[currentQualityIndex];
+                const imageUrl = getThumbnailUrl(currentVideoId, qualityKey);
 
                 // Fetch image blob
                 const response = await fetch(imageUrl);
@@ -548,12 +662,13 @@
 
             } catch (err) {
                 console.error("Download fallback triggered:", err);
-                // Direct fallback link
+                const qualityKey = qualityList[currentQualityIndex];
                 const a = document.createElement('a');
-                a.href = getThumbnailUrl(currentVideoId, currentQuality);
+                a.href = getThumbnailUrl(currentVideoId, qualityKey);
                 a.download = 'turkomen-yt-thumbnail-downloader.png';
                 a.target = '_blank';
                 a.click();
+
                 resetDownloadBtn();
             }
 
@@ -582,13 +697,14 @@
         }
 
         /**
-         * Clear Result UI
+         * Clear Result UI completely
          */
         function clearResult() {
             document.getElementById('resultCard').classList.add('hidden');
             document.getElementById('videoUrlInput').value = '';
             document.getElementById('errorMessage').classList.add('hidden');
             currentVideoId = '';
+            currentQualityIndex = 0;
         }
     </script>
 </body>
